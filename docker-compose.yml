@@ -1,30 +1,59 @@
-version: '1.0.0'
+version: "1.0.0"
 
 services:
-  
   Chat-UI:
     image: chat-ui
     hostname: ChatUI
     build:
-      context: apps\chat-ui
+      context: apps/chat-ui
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
       - API
-  
+      - MongoDB
+
   API:
     image: api
     hostname: API
     build:
-      context: apps\api
+      context: apps/api
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     depends_on:
       - ModelsHandler
-  
+
   ModelsHandler:
     image: models-handler
     hostname: ModelsHandler
     restart: always
     build:
       dockerfile: ModelHandler.Dockerfile
+    ports:
+      - "11434:11434"
+
+  MongoDB:
+    image: mongo
+    hostname: MongoDB
+    networks:
+      default:
+        aliases:
+          - MongoDB
+    build:
+      dockerfile: MongoDB.Dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mongodata
+        target: /data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: chat-ui
+
+volumes:
+  mongodata:
+    driver: local

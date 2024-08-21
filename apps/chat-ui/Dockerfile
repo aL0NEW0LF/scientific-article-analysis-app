@@ -33,7 +33,7 @@ FROM node:20-slim as local_db_false
 RUN apt-get update
 RUN apt-get install gnupg curl -y
 
-ENV MONGODB_URL=mongodb://host.docker.internal:27017
+ENV MONGODB_URL=mongodb://root:rootpassword@MongoDB:27017/$chat-ui?authSource=admin
 RUN mkdir -p /data/db
 RUN chown -R 1000:1000 /data/db
 
